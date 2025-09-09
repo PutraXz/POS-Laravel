@@ -13,7 +13,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('product');
+        $product = Product::all();
+        dd($product);
+        return view('product', compact('product'));
     }
 
     /**
@@ -34,6 +36,7 @@ class ProductController extends Controller
             'price' => 'required|integer',
             'image' => 'required|file|mimes:jpg,jpeg,png,fig,webp',
             'stock' => 'required|integer',
+            'kategori' => 'required|string',
         ]);
         $filename = time().'.'.$request->image->getClientOriginalName();
         $request->image->move(public_path('img_product'), $filename);
@@ -50,15 +53,15 @@ class ProductController extends Controller
     {
        return DataTables::of(Product::query())
         ->addIndexColumn()
-        ->editColumn('price', fn ($p) => number_format($p->price, 0, ',', '.'))
+        ->editColumn('price', fn ($p) => 'Rp'.number_format($p->price, 0, ',', '.'))
         ->addColumn('image', function ($p) {
             $src = asset('img_product/'.$p->image);
             return '<img src="'.$src.'" alt="'.$p->name_product.'" width="75" class="img-thumbnail">';
         })
         ->addColumn('action', function ($p) {
             return '
-                <button class="btn btn-sm btn-primary edit" data-id="'.$p->id.'">Edit</button>
-                <button class="btn btn-sm btn-danger delete" data-id="'.$p->id.'">Hapus</button>
+                <button class="btn btn-sm btn-primary edit" data-bs-toggle="modal" data-bs-toggle="#edit-product-'.$p->id.'">Edit</button>
+                <button class="btn btn-sm btn-danger delete" data-id="edit-product-'.$p->id.'">Hapus</button>
             ';
         })
         ->rawColumns(['image','action'])
@@ -70,7 +73,6 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
     }
 
     /**

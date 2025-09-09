@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('price');
             $table->String('image');
             $table->integer('stock');
+            $table->String('kategori');
             $table->timestamps();
         });
     }
