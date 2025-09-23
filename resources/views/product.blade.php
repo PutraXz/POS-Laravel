@@ -17,7 +17,7 @@
                 <th>Gambar</th>
                 <th>Stock</th>
                 <th>Kategori</th>
-                <th>Action</th> 
+                <th>Action</th>
             </tr>
         </thead>
     </table>
@@ -71,7 +71,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addProduct">Add Product</h1>
+                    <h1 class="modal-title fs-5">Add Product</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -145,7 +145,7 @@
                         data: 'stock',
                         name: 'stock'
                     },
-                                        {
+                    {
                         data: 'kategori',
                         name: 'kategori'
                     },

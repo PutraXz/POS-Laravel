@@ -5,13 +5,14 @@
 </aside>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-{{-- Navbar (fixed at top) --}}
 @include('layouts.navbar-home')
-
-{{-- Sidebar Right (permanent, below navbar) --}}
-<aside class="sidebar-right">
-    @include('layouts.sidebar-right')
+<aside class="sidebar-right" id="cartSidebar">
+    @include('layouts.sidebar-right', [
+        'cart' => session('cart', []),
+        'tot' => ['subtotal' => 0, 'diskon' => 0, 'pajak' => 0, 'total' => 0],
+    ])
 </aside>
+
 @section('content')
     <div class="container">
         <form class="d-flex w-25 me-3 mt-3" style="height: 2.5rem">
@@ -24,16 +25,16 @@
             <button class="btn text-light me-3 btn-c">Snack</button>
             <button class="btn text-light btn-c">Mie</button>
         </div>
-        <div class="row">
+        <div class="row" id="productGrid">
             @foreach ($products as $product)
                 <div class="col-3 mb-4">
-                    <div class="card" style="width: 20rem;">
-                        <img src="{{ asset('img_product/') . '/' . $product->image }}" class="card-img-top w-60"
-                            alt="...">
+                    <div class="card product-card" data-id="{{ $product->id }}" style="cursor:pointer; width:20rem;">
+                        <img src="{{ asset('img_product/' . $product->image) }}" class="card-img-top w-60" alt="">
                         <div class="card-body">
                             <p class="card-text text-center">{{ $product->name_product }}</p>
                             <p class="card-text text-center" style="color:#9C2C77;font-weight:500">
-                                {{ 'Rp' . number_format($product->price, 0, ',', '.') }}</p>
+                                {{ 'Rp' . number_format($product->price, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
                 </div>
