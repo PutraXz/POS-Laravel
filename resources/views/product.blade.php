@@ -25,7 +25,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addProduct">Edit Product</h1>
+                    <h1 class="modal-title fs-5">Edit Product</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -108,7 +108,6 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn text-light" style="background-color:#9C2C77">Save</button>
                 </div>
-
                 </form>
             </div>
         </div>
