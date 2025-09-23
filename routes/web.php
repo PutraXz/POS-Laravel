@@ -15,6 +15,9 @@ Route::get('/dashboard', function () {
 Route::get('/product', [ProductController::class, 'index']);
 Route::post('/product', [ProductController::class, 'store'])->name('upload.product');
 Route::get('/product-show', [ProductController::class, 'show'])->name('show.product');
+Route::post('/product/update/{id}', [ProductController::class, 'update'])->name('product.update');
+Route::delete('/product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');

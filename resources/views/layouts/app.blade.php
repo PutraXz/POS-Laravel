@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poslite</title>
     @vite(['resources/js/app.js'])
+        <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -134,6 +135,50 @@
             bindCartButtons();
         });
     </script>
+<script>
+    $(document).ready(function() {
+        $('#product').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route('show.product') }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'name_product', name: 'name_product' },
+                { data: 'price', name: 'price' },
+                { data: 'image', name: 'image', orderable: false, searchable: false },
+                { data: 'stock', name: 'stock' },
+                { data: 'kategori', name: 'kategori' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ]
+        });
+
+         $(document).on('click', '.delete', function() {
+            const id = $(this).data('id');
+            console.log('Delete clicked for ID:', id);
+
+            if (confirm("Yakin ingin menghapus product ini?")) {
+                $.ajax({
+                    url: `/product/${id}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res) {
+                        alert(res.message);
+                        $('#product').DataTable().ajax.reload();
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        alert("Terjadi kesalahan saat menghapus data.");
+                    }
+                });
+            }
+        });
+
+    });
+    // Delete action
+       
+</script>
 
 </body>
 
