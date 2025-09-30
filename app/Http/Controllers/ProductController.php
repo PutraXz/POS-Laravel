@@ -151,6 +151,11 @@ class ProductController extends Controller
     $product->delete();
 
     return back()->with('success', 'Produk berhasil dihapus.');
+<<<<<<< HEAD
+=======
+}
+
+>>>>>>> 1c72be0 (solv button delete)
 }
 
 }
