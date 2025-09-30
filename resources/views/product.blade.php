@@ -8,6 +8,12 @@
     <h4>Product</h4>
     <button class="btn text-light" data-bs-toggle="modal" data-bs-target="#addProduct" style="background-color:#9C2C77">Add
         Product</button>
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">{{ $errors->first() }}</div>
+    @endif
     <table class="table my-4" id="product">
         <thead>
             <tr>
@@ -21,52 +27,58 @@
             </tr>
         </thead>
     </table>
-    <div class="modal fade" id="edit-product-" tabindex="-1" aria-labelledby="addProduct" aria-hidden="true">
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Edit Product</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="post" enctype="multipart/form-data">
-                        @csrf
+            <form id="editForm" enctype="multipart/form-data">
+                @csrf
+                {{-- <input type="hidden" name="_method" value="PUT"> <-- This is handled in JS now --}}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editModalLabel">Edit Product</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="product_id" id="edit_id">
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Nama Product</label>
-                            <input type="text" name="name_product" class="form-control" required>
+                            <label class="form-label">Nama Product</label>
+                            <input type="text" name="name_product" id="edit_name" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Harga Product</label>
-                            <input type="number" name="price" class="form-control" required>
+                            <label class="form-label">Harga Product</label>
+                            <input type="number" name="price" id="edit_price" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Gambar Product</label>
-                            <input type="file" name="image" class="form-control" required>
+                            <label class="form-label">Gambar Product (opsional)</label>
+                            <input type="file" name="image" id="edit_image" class="form-control">
+                            <div class="mt-2">
+                                <img id="edit_preview" src="" alt="" width="90"
+                                    class="img-thumbnail d-none">
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Stock Product</label>
-                            <input type="number" name="stock" class="form-control" required>
+                            <label class="form-label">Stock Product</label>
+                            <input type="number" name="stock" id="edit_stock" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Stock Product</label>
-                            <select class="form-select" name="kategori" aria-label="Default select example">
-                                <option selected>Select Category</option>
+                            <label class="form-label">Kategori</label>
+                            <select class="form-select" name="kategori" id="edit_kategori" required>
+                                <option value="" disabled>Pilih Kategori</option>
                                 <option value="makanan">Makanan</option>
                                 <option value="minuman">Minuman</option>
                                 <option value="snack">Snack</option>
                                 <option value="mie">Mie</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn text-light" style="background-color:#9C2C77">Simpan</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn text-light" style="background-color:#9C2C77">Save</button>
-                </div>
-
-                </form>
-            </div>
+            </form>
         </div>
     </div>
+
     <div class="modal fade" id="addProduct" tabindex="-1" aria-labelledby="addProduct" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -75,7 +87,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="" class="col-sm-4 col-form-label">Nama Product</label>
@@ -94,9 +106,9 @@
                             <input type="number" name="stock" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="" class="col-sm-4 col-form-label">Stock Product</label>
+                            <label for="" class="col-sm-4 col-form-label">Kategori</label>
                             <select class="form-select" name="kategori" aria-label="Default select example">
-                                <option selected>Select Category</option>
+                                <option selected disabled>Select Category</option>
                                 <option value="makanan">Makanan</option>
                                 <option value="minuman">Minuman</option>
                                 <option value="snack">Snack</option>
@@ -114,9 +126,15 @@
     </div>
 @endsection
 @push('script')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#product').DataTable({
+    <script>
+        // Setup AJAX untuk mengirimkan token CSRF di setiap request
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(function() {
+            const table = $('#product').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('show.product') }}',
@@ -156,6 +174,59 @@
                     }
                 ]
             });
+
+            // Klik Edit -> open modal + prefill
+            $('#product').on('click', '.edit', function() {
+                const id = $(this).data('id');
+                // Menggunakan route name products.get
+                $.get('{{ url('/products') }}/' + id, function(res) {
+                    if (res.ok) {
+                        const p = res.data;
+                        $('#edit_id').val(p.id);
+                        $('#edit_name').val(p.name_product);
+                        $('#edit_price').val(p.price);
+                        $('#edit_stock').val(p.stock);
+                        $('#edit_kategori').val(p.kategori);
+
+                        if (res.image_url) {
+                            $('#edit_preview').attr('src', res.image_url).removeClass('d-none');
+                        } else {
+                            $('#edit_preview').addClass('d-none');
+                        }
+                        $('#editModal').modal('show'); // Pastikan modal muncul
+                    }
+                });
+            });
+
+            // Submit Update
+            $('#editForm').on('submit', function(e) {
+                e.preventDefault();
+                const id = $('#edit_id').val();
+                const formData = new FormData(this);
+                // Tambahkan method spoofing untuk PUT agar sesuai dengan route put
+                formData.append('_method', 'PUT');
+
+                $.ajax({
+                    url: '{{ url('/products') }}/' + id,
+                    type: 'POST', // Menggunakan POST untuk mengirim FormData dengan file dan method spoofing
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: (res) => {
+                        if (res.ok) {
+                            $('#editModal').modal('hide');
+                            // Alert/Toast sukses di sini jika perlu
+                            table.ajax.reload(null, false);
+                        }
+                    },
+                    error: (xhr) => {
+                        alert('Gagal update: ' + (xhr.responseJSON?.message ||
+                            'Unknown error'));
+                    }
+                });
+            });
+
+
         });
     </script>
 @endpush
