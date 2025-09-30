@@ -1,5 +1,4 @@
 @extends('layouts.app')
-{{-- Sidebar Left (overlay) --}}
 <aside class="sidebar-left" id="sidebarLeft">
     @include('layouts.sidebar-left')
 </aside>

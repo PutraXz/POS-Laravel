@@ -66,7 +66,7 @@ class CartController extends Controller
             $this->putCart($request, $cart);
         }
 
-        $html = view('partials.cart_sidebar', [
+        $html = view('layouts.sidebar-right', [
             'cart' => $cart,
             'tot'  => $this->totals($cart),
         ])->render();
@@ -81,7 +81,7 @@ class CartController extends Controller
         unset($cart[$request->product_id]);
         $this->putCart($request, $cart);
 
-        $html = view('partials.cart_sidebar', [
+        $html = view('layouts.sidebar-right', [
             'cart' => $cart,
             'tot'  => $this->totals($cart),
         ])->render();
@@ -91,7 +91,7 @@ class CartController extends Controller
     public function fragment(Request $request)
     {
         $cart = $this->getCart($request);
-        $html = view('partials.cart_sidebar', [
+        $html = view('layouts.sidebar-right', [
             'cart' => $cart,
             'tot'  => $this->totals($cart),
         ])->render();
